@@ -1,0 +1,42 @@
+schema_version: 1
+name: synthetic_uma_host
+resources:
+  - {id: uma_capacity, kind: storage, unit: byte, capacity: 34359738368}
+  - {id: uma_bw, kind: rate, unit: byte/s, capacity: 120000000000, policy: shared}
+  - {id: cpu_slots, kind: slots, unit: count, capacity: 1, policy: exclusive}
+  - {id: gpu_slots, kind: slots, unit: count, capacity: 1, policy: exclusive}
+nodes:
+  - {id: uma0, kind: memory, host_id: u0, physical_pool_id: uma0,
+     capacity_resource_id: uma_capacity, address_domain: shared0, tier: UMA,
+     alignment_bytes: 64}
+  - {id: uc0, kind: compute, host_id: u0, device_type: cpu,
+     resource_ids: [cpu_slots], accessible_pool_ids: [uma0],
+     kernel_profile_ids: [uma_cpu_gemm]}
+  - {id: ug0, kind: compute, host_id: u0, device_type: gpu,
+     resource_ids: [gpu_slots], accessible_pool_ids: [uma0],
+     kernel_profile_ids: [uma_gpu_gemm]}
+channels:
+  - {id: uma_cpu_r, src: uma0, dst: uc0, kind: memory_access,
+     allowed_operations: [local_load], payload_Bps: 120000000000,
+     latency_s: 0, resource_demands: {uma_bw: 1}}
+  - {id: cpu_uma_w, src: uc0, dst: uma0, kind: memory_access,
+     allowed_operations: [local_store], payload_Bps: 120000000000,
+     latency_s: 0, resource_demands: {uma_bw: 1}}
+  - {id: uma_gpu_r, src: uma0, dst: ug0, kind: memory_access,
+     allowed_operations: [local_load], payload_Bps: 120000000000,
+     latency_s: 0, resource_demands: {uma_bw: 1}}
+  - {id: gpu_uma_w, src: ug0, dst: uma0, kind: memory_access,
+     allowed_operations: [local_store], payload_Bps: 120000000000,
+     latency_s: 0, resource_demands: {uma_bw: 1}}
+visibility:
+  - {pool_id: uma0, device_ids: [uc0, ug0], shared_addressable: true,
+     visibility_policy: explicit_event, ownership_transition_s: 0}
+kernel_profiles:
+  - {id: uma_cpu_gemm, op_type: gemm, input_dtype: fp32,
+     accumulate_dtype: fp32, output_dtype: fp32, model: analytical_roofline,
+     effective_ops_per_s: 1000000000000, slot_resource_id: cpu_slots,
+     memory_rate_resource_ids: [uma_bw], launch_s: 0.000001}
+  - {id: uma_gpu_gemm, op_type: gemm, input_dtype: fp32,
+     accumulate_dtype: fp32, output_dtype: fp32, model: analytical_roofline,
+     effective_ops_per_s: 10000000000000, slot_resource_id: gpu_slots,
+     memory_rate_resource_ids: [uma_bw], launch_s: 0.000005}

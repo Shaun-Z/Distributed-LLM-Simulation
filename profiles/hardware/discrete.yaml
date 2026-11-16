@@ -1,0 +1,126 @@
+schema_version: 1
+name: synthetic_discrete_host
+resources:
+  - {id: cpu_slots, kind: slots, unit: count, capacity: 1, policy: exclusive}
+  - {id: gpu_slots, kind: slots, unit: count, capacity: 1, policy: exclusive}
+  - {id: dma_slots, kind: slots, unit: count, capacity: 1, policy: exclusive}
+  - {id: ram_capacity, kind: storage, unit: byte, capacity: 68719476736}
+  - {id: hbm_capacity, kind: storage, unit: byte, capacity: 17179869184}
+  - {id: ram_bw, kind: rate, unit: byte/s, capacity: 60000000000, policy: shared}
+  - {id: hbm_bw, kind: rate, unit: byte/s, capacity: 600000000000, policy: shared}
+  - {id: pcie_h2d_bw, kind: rate, unit: byte/s, capacity: 24000000000, policy: shared}
+  - {id: pcie_d2h_bw, kind: rate, unit: byte/s, capacity: 24000000000, policy: shared}
+nodes:
+  - id: cpu0
+    kind: compute
+    host_id: h0
+    device_type: cpu
+    resource_ids: [cpu_slots]
+    accessible_pool_ids: [ram0]
+    kernel_profile_ids: [cpu_gemm_fp32]
+  - id: gpu0
+    kind: compute
+    host_id: h0
+    device_type: gpu
+    resource_ids: [gpu_slots]
+    accessible_pool_ids: [hbm0]
+    kernel_profile_ids: [gpu_gemm_bf16]
+  - {id: ram0, kind: memory, host_id: h0, physical_pool_id: ram0,
+     capacity_resource_id: ram_capacity, address_domain: host0, tier: RAM,
+     technology: DDR, alignment_bytes: 64}
+  - {id: hbm0, kind: memory, host_id: h0, physical_pool_id: hbm0,
+     capacity_resource_id: hbm_capacity, address_domain: gpu0, tier: VRAM,
+     technology: HBM, alignment_bytes: 256}
+  - {id: pcie0, kind: switch, host_id: h0}
+  - {id: dma0, kind: dma, host_id: h0, resource_ids: [dma_slots]}
+channels:
+  - id: ram_cpu_read
+    src: ram0
+    dst: cpu0
+    kind: memory_access
+    allowed_operations: [local_load]
+    payload_Bps: 60000000000
+    latency_s: 0
+    resource_demands: {ram_bw: 1}
+  - id: cpu_ram_write
+    src: cpu0
+    dst: ram0
+    kind: memory_access
+    allowed_operations: [local_store]
+    payload_Bps: 60000000000
+    latency_s: 0
+    resource_demands: {ram_bw: 1}
+  - id: hbm_gpu_read
+    src: hbm0
+    dst: gpu0
+    kind: memory_access
+    allowed_operations: [local_load]
+    payload_Bps: 600000000000
+    latency_s: 0
+    resource_demands: {hbm_bw: 1}
+  - id: gpu_hbm_write
+    src: gpu0
+    dst: hbm0
+    kind: memory_access
+    allowed_operations: [local_store]
+    payload_Bps: 600000000000
+    latency_s: 0
+    resource_demands: {hbm_bw: 1}
+  - id: ram_pcie
+    src: ram0
+    dst: pcie0
+    kind: copy
+    allowed_operations: [copy]
+    payload_Bps: 24000000000
+    latency_s: 0.000002
+    resource_demands: {ram_bw: 1, pcie_h2d_bw: 1}
+  - id: pcie_hbm
+    src: pcie0
+    dst: hbm0
+    kind: copy
+    allowed_operations: [copy]
+    payload_Bps: 24000000000
+    latency_s: 0
+    resource_demands: {hbm_bw: 1}
+  - id: hbm_pcie
+    src: hbm0
+    dst: pcie0
+    kind: copy
+    allowed_operations: [copy]
+    payload_Bps: 24000000000
+    latency_s: 0.000002
+    resource_demands: {hbm_bw: 1, pcie_d2h_bw: 1}
+  - id: pcie_ram
+    src: pcie0
+    dst: ram0
+    kind: copy
+    allowed_operations: [copy]
+    payload_Bps: 24000000000
+    latency_s: 0
+    resource_demands: {ram_bw: 1}
+routes:
+  - {id: h2d, channel_ids: [ram_pcie, pcie_hbm], mode: fluid_path,
+     slot_demands: {dma_slots: 1}}
+  - {id: d2h, channel_ids: [hbm_pcie, pcie_ram], mode: fluid_path,
+     slot_demands: {dma_slots: 1}}
+kernel_profiles:
+  - id: cpu_gemm_fp32
+    op_type: gemm
+    input_dtype: fp32
+    accumulate_dtype: fp32
+    output_dtype: fp32
+    model: analytical_roofline
+    effective_ops_per_s: 1000000000000
+    slot_resource_id: cpu_slots
+    memory_rate_resource_ids: [ram_bw]
+    launch_s: 0.000001
+  - id: gpu_gemm_bf16
+    op_type: gemm
+    input_dtype: bf16
+    accumulate_dtype: fp32
+    output_dtype: bf16
+    model: analytical_roofline
+    effective_ops_per_s: 30000000000000
+    slot_resource_id: gpu_slots
+    memory_rate_resource_ids: [hbm_bw]
+    launch_s: 0.000005

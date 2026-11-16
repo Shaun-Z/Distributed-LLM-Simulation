@@ -1,0 +1,1124 @@
+schema_version: 1
+name: synthetic_two_discrete_hosts
+synthetic: true
+resources:
+- id: h0/cpu_slots
+  kind: slots
+  unit: count
+  capacity: 1
+  policy: exclusive
+- id: h0/gpu_slots
+  kind: slots
+  unit: count
+  capacity: 1
+  policy: exclusive
+- id: h0/dma_slots
+  kind: slots
+  unit: count
+  capacity: 1
+  policy: exclusive
+- id: h0/ram_capacity
+  kind: storage
+  unit: byte
+  capacity: 68719476736
+- id: h0/hbm_capacity
+  kind: storage
+  unit: byte
+  capacity: 17179869184
+- id: h0/ram_bw
+  kind: rate
+  unit: byte/s
+  capacity: 60000000000
+  policy: shared
+- id: h0/hbm_bw
+  kind: rate
+  unit: byte/s
+  capacity: 600000000000
+  policy: shared
+- id: h0/pcie_h2d_bw
+  kind: rate
+  unit: byte/s
+  capacity: 24000000000
+  policy: shared
+- id: h0/pcie_d2h_bw
+  kind: rate
+  unit: byte/s
+  capacity: 24000000000
+  policy: shared
+- id: h1/cpu_slots
+  kind: slots
+  unit: count
+  capacity: 1
+  policy: exclusive
+- id: h1/gpu_slots
+  kind: slots
+  unit: count
+  capacity: 1
+  policy: exclusive
+- id: h1/dma_slots
+  kind: slots
+  unit: count
+  capacity: 1
+  policy: exclusive
+- id: h1/ram_capacity
+  kind: storage
+  unit: byte
+  capacity: 68719476736
+- id: h1/hbm_capacity
+  kind: storage
+  unit: byte
+  capacity: 17179869184
+- id: h1/ram_bw
+  kind: rate
+  unit: byte/s
+  capacity: 60000000000
+  policy: shared
+- id: h1/hbm_bw
+  kind: rate
+  unit: byte/s
+  capacity: 600000000000
+  policy: shared
+- id: h1/pcie_h2d_bw
+  kind: rate
+  unit: byte/s
+  capacity: 24000000000
+  policy: shared
+- id: h1/pcie_d2h_bw
+  kind: rate
+  unit: byte/s
+  capacity: 24000000000
+  policy: shared
+- id: wan_01
+  kind: rate
+  unit: byte/s
+  capacity: 12500000000
+  policy: shared
+- id: wan_10
+  kind: rate
+  unit: byte/s
+  capacity: 12500000000
+  policy: shared
+nodes:
+- id: cpu0
+  kind: compute
+  host_id: h0
+  device_type: cpu
+  resource_ids:
+  - h0/cpu_slots
+  accessible_pool_ids:
+  - ram0
+  kernel_profile_ids:
+  - h0/cpu0_gemm_fp32
+  - h0/cpu0_elementwise_fp32
+  - h0/cpu0_norm_fp32
+  - h0/cpu0_attention_fp32
+  - h0/cpu0_convolution_fp32
+  - h0/cpu0_reduce_fp32
+  - h0/cpu0_sync_fp32
+  - h0/cpu0_gemm_bf16
+  - h0/cpu0_elementwise_bf16
+  - h0/cpu0_norm_bf16
+  - h0/cpu0_attention_bf16
+  - h0/cpu0_convolution_bf16
+  - h0/cpu0_reduce_bf16
+  - h0/cpu0_sync_bf16
+- id: gpu0
+  kind: compute
+  host_id: h0
+  device_type: gpu
+  resource_ids:
+  - h0/gpu_slots
+  accessible_pool_ids:
+  - hbm0
+  kernel_profile_ids:
+  - h0/gpu0_gemm_fp32
+  - h0/gpu0_elementwise_fp32
+  - h0/gpu0_norm_fp32
+  - h0/gpu0_attention_fp32
+  - h0/gpu0_convolution_fp32
+  - h0/gpu0_reduce_fp32
+  - h0/gpu0_sync_fp32
+  - h0/gpu0_gemm_bf16
+  - h0/gpu0_elementwise_bf16
+  - h0/gpu0_norm_bf16
+  - h0/gpu0_attention_bf16
+  - h0/gpu0_convolution_bf16
+  - h0/gpu0_reduce_bf16
+  - h0/gpu0_sync_bf16
+- id: ram0
+  kind: memory
+  host_id: h0
+  physical_pool_id: ram0
+  capacity_resource_id: h0/ram_capacity
+  address_domain: host0
+  tier: RAM
+  technology: DDR
+  alignment_bytes: 64
+- id: hbm0
+  kind: memory
+  host_id: h0
+  physical_pool_id: hbm0
+  capacity_resource_id: h0/hbm_capacity
+  address_domain: gpu0
+  tier: VRAM
+  technology: HBM
+  alignment_bytes: 256
+- id: pcie0
+  kind: switch
+  host_id: h0
+- id: dma0
+  kind: dma
+  host_id: h0
+  resource_ids:
+  - h0/dma_slots
+- id: cpu1
+  kind: compute
+  host_id: h1
+  device_type: cpu
+  resource_ids:
+  - h1/cpu_slots
+  accessible_pool_ids:
+  - ram1
+  kernel_profile_ids:
+  - h1/cpu0_gemm_fp32
+  - h1/cpu0_elementwise_fp32
+  - h1/cpu0_norm_fp32
+  - h1/cpu0_attention_fp32
+  - h1/cpu0_convolution_fp32
+  - h1/cpu0_reduce_fp32
+  - h1/cpu0_sync_fp32
+  - h1/cpu0_gemm_bf16
+  - h1/cpu0_elementwise_bf16
+  - h1/cpu0_norm_bf16
+  - h1/cpu0_attention_bf16
+  - h1/cpu0_convolution_bf16
+  - h1/cpu0_reduce_bf16
+  - h1/cpu0_sync_bf16
+- id: gpu1
+  kind: compute
+  host_id: h1
+  device_type: gpu
+  resource_ids:
+  - h1/gpu_slots
+  accessible_pool_ids:
+  - hbm1
+  kernel_profile_ids:
+  - h1/gpu0_gemm_fp32
+  - h1/gpu0_elementwise_fp32
+  - h1/gpu0_norm_fp32
+  - h1/gpu0_attention_fp32
+  - h1/gpu0_convolution_fp32
+  - h1/gpu0_reduce_fp32
+  - h1/gpu0_sync_fp32
+  - h1/gpu0_gemm_bf16
+  - h1/gpu0_elementwise_bf16
+  - h1/gpu0_norm_bf16
+  - h1/gpu0_attention_bf16
+  - h1/gpu0_convolution_bf16
+  - h1/gpu0_reduce_bf16
+  - h1/gpu0_sync_bf16
+- id: ram1
+  kind: memory
+  host_id: h1
+  physical_pool_id: ram1
+  capacity_resource_id: h1/ram_capacity
+  address_domain: host0
+  tier: RAM
+  technology: DDR
+  alignment_bytes: 64
+- id: hbm1
+  kind: memory
+  host_id: h1
+  physical_pool_id: hbm1
+  capacity_resource_id: h1/hbm_capacity
+  address_domain: gpu1
+  tier: VRAM
+  technology: HBM
+  alignment_bytes: 256
+- id: pcie1
+  kind: switch
+  host_id: h1
+- id: dma1
+  kind: dma
+  host_id: h1
+  resource_ids:
+  - h1/dma_slots
+channels:
+- id: h0/ram_cpu_read
+  src: ram0
+  dst: cpu0
+  kind: memory_access
+  allowed_operations:
+  - local_load
+  payload_Bps: 60000000000
+  latency_s: 0
+  resource_demands:
+    h0/ram_bw: 1
+- id: h0/cpu_ram_write
+  src: cpu0
+  dst: ram0
+  kind: memory_access
+  allowed_operations:
+  - local_store
+  payload_Bps: 60000000000
+  latency_s: 0
+  resource_demands:
+    h0/ram_bw: 1
+- id: h0/hbm_gpu_read
+  src: hbm0
+  dst: gpu0
+  kind: memory_access
+  allowed_operations:
+  - local_load
+  payload_Bps: 600000000000
+  latency_s: 0
+  resource_demands:
+    h0/hbm_bw: 1
+- id: h0/gpu_hbm_write
+  src: gpu0
+  dst: hbm0
+  kind: memory_access
+  allowed_operations:
+  - local_store
+  payload_Bps: 600000000000
+  latency_s: 0
+  resource_demands:
+    h0/hbm_bw: 1
+- id: h0/ram_pcie
+  src: ram0
+  dst: pcie0
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 2.0e-06
+  resource_demands:
+    h0/ram_bw: 1
+    h0/pcie_h2d_bw: 1
+- id: h0/pcie_hbm
+  src: pcie0
+  dst: hbm0
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 0
+  resource_demands:
+    h0/hbm_bw: 1
+- id: h0/hbm_pcie
+  src: hbm0
+  dst: pcie0
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 2.0e-06
+  resource_demands:
+    h0/hbm_bw: 1
+    h0/pcie_d2h_bw: 1
+- id: h0/pcie_ram
+  src: pcie0
+  dst: ram0
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 0
+  resource_demands:
+    h0/ram_bw: 1
+- id: h1/ram_cpu_read
+  src: ram1
+  dst: cpu1
+  kind: memory_access
+  allowed_operations:
+  - local_load
+  payload_Bps: 60000000000
+  latency_s: 0
+  resource_demands:
+    h1/ram_bw: 1
+- id: h1/cpu_ram_write
+  src: cpu1
+  dst: ram1
+  kind: memory_access
+  allowed_operations:
+  - local_store
+  payload_Bps: 60000000000
+  latency_s: 0
+  resource_demands:
+    h1/ram_bw: 1
+- id: h1/hbm_gpu_read
+  src: hbm1
+  dst: gpu1
+  kind: memory_access
+  allowed_operations:
+  - local_load
+  payload_Bps: 600000000000
+  latency_s: 0
+  resource_demands:
+    h1/hbm_bw: 1
+- id: h1/gpu_hbm_write
+  src: gpu1
+  dst: hbm1
+  kind: memory_access
+  allowed_operations:
+  - local_store
+  payload_Bps: 600000000000
+  latency_s: 0
+  resource_demands:
+    h1/hbm_bw: 1
+- id: h1/ram_pcie
+  src: ram1
+  dst: pcie1
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 2.0e-06
+  resource_demands:
+    h1/ram_bw: 1
+    h1/pcie_h2d_bw: 1
+- id: h1/pcie_hbm
+  src: pcie1
+  dst: hbm1
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 0
+  resource_demands:
+    h1/hbm_bw: 1
+- id: h1/hbm_pcie
+  src: hbm1
+  dst: pcie1
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 2.0e-06
+  resource_demands:
+    h1/hbm_bw: 1
+    h1/pcie_d2h_bw: 1
+- id: h1/pcie_ram
+  src: pcie1
+  dst: ram1
+  kind: copy
+  allowed_operations:
+  - copy
+  payload_Bps: 24000000000
+  latency_s: 0
+  resource_demands:
+    h1/ram_bw: 1
+- id: ram_01
+  src: ram0
+  dst: ram1
+  kind: network
+  allowed_operations:
+  - copy
+  payload_Bps: 12500000000
+  latency_s: 1.0e-05
+  resource_demands:
+    wan_01: 1
+    h0/ram_bw: 1
+    h1/ram_bw: 1
+- id: hbm_01
+  src: hbm0
+  dst: hbm1
+  kind: network
+  allowed_operations:
+  - rdma_write
+  payload_Bps: 12500000000
+  latency_s: 1.0e-05
+  resource_demands:
+    wan_01: 1
+    h0/hbm_bw: 1
+    h1/hbm_bw: 1
+- id: ram_10
+  src: ram1
+  dst: ram0
+  kind: network
+  allowed_operations:
+  - copy
+  payload_Bps: 12500000000
+  latency_s: 1.0e-05
+  resource_demands:
+    wan_10: 1
+    h1/ram_bw: 1
+    h0/ram_bw: 1
+- id: hbm_10
+  src: hbm1
+  dst: hbm0
+  kind: network
+  allowed_operations:
+  - rdma_write
+  payload_Bps: 12500000000
+  latency_s: 1.0e-05
+  resource_demands:
+    wan_10: 1
+    h1/hbm_bw: 1
+    h0/hbm_bw: 1
+routes:
+- id: h2d0
+  channel_ids:
+  - h0/ram_pcie
+  - h0/pcie_hbm
+  mode: fluid_path
+  slot_demands:
+    h0/dma_slots: 1
+- id: d2h0
+  channel_ids:
+  - h0/hbm_pcie
+  - h0/pcie_ram
+  mode: fluid_path
+  slot_demands:
+    h0/dma_slots: 1
+- id: h2d1
+  channel_ids:
+  - h1/ram_pcie
+  - h1/pcie_hbm
+  mode: fluid_path
+  slot_demands:
+    h1/dma_slots: 1
+- id: d2h1
+  channel_ids:
+  - h1/hbm_pcie
+  - h1/pcie_ram
+  mode: fluid_path
+  slot_demands:
+    h1/dma_slots: 1
+- id: ram_01
+  channel_ids:
+  - ram_01
+  mode: fluid_path
+  operation: copy
+- id: hbm_01
+  channel_ids:
+  - hbm_01
+  mode: fluid_path
+  operation: rdma_write
+- id: ram_10
+  channel_ids:
+  - ram_10
+  mode: fluid_path
+  operation: copy
+- id: hbm_10
+  channel_ids:
+  - hbm_10
+  mode: fluid_path
+  operation: rdma_write
+kernel_profiles:
+- id: h0/cpu0_gemm_fp32
+  op_type: gemm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_elementwise_fp32
+  op_type: elementwise
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_norm_fp32
+  op_type: norm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_attention_fp32
+  op_type: attention
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_convolution_fp32
+  op_type: convolution
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_reduce_fp32
+  op_type: reduce
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_sync_fp32
+  op_type: sync
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: calibrated_duration
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h0/cpu0_gemm_bf16
+  op_type: gemm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_elementwise_bf16
+  op_type: elementwise
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_norm_bf16
+  op_type: norm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_attention_bf16
+  op_type: attention
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_convolution_bf16
+  op_type: convolution
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_reduce_bf16
+  op_type: reduce
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids:
+  - h0/ram_bw
+  launch_s: 1.0e-06
+- id: h0/cpu0_sync_bf16
+  op_type: sync
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: calibrated_duration
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h0/cpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h0/gpu0_gemm_fp32
+  op_type: gemm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_elementwise_fp32
+  op_type: elementwise
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_norm_fp32
+  op_type: norm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_attention_fp32
+  op_type: attention
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_convolution_fp32
+  op_type: convolution
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_reduce_fp32
+  op_type: reduce
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_sync_fp32
+  op_type: sync
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: calibrated_duration
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h0/gpu0_gemm_bf16
+  op_type: gemm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_elementwise_bf16
+  op_type: elementwise
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_norm_bf16
+  op_type: norm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_attention_bf16
+  op_type: attention
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_convolution_bf16
+  op_type: convolution
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_reduce_bf16
+  op_type: reduce
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids:
+  - h0/hbm_bw
+  launch_s: 5.0e-06
+- id: h0/gpu0_sync_bf16
+  op_type: sync
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: calibrated_duration
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h0/gpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h1/cpu0_gemm_fp32
+  op_type: gemm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_elementwise_fp32
+  op_type: elementwise
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_norm_fp32
+  op_type: norm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_attention_fp32
+  op_type: attention
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_convolution_fp32
+  op_type: convolution
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_reduce_fp32
+  op_type: reduce
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_sync_fp32
+  op_type: sync
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: calibrated_duration
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h1/cpu0_gemm_bf16
+  op_type: gemm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_elementwise_bf16
+  op_type: elementwise
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_norm_bf16
+  op_type: norm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_attention_bf16
+  op_type: attention
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_convolution_bf16
+  op_type: convolution
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_reduce_bf16
+  op_type: reduce
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids:
+  - h1/ram_bw
+  launch_s: 1.0e-06
+- id: h1/cpu0_sync_bf16
+  op_type: sync
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: calibrated_duration
+  effective_ops_per_s: 1000000000000
+  slot_resource_id: h1/cpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h1/gpu0_gemm_fp32
+  op_type: gemm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_elementwise_fp32
+  op_type: elementwise
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_norm_fp32
+  op_type: norm
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_attention_fp32
+  op_type: attention
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_convolution_fp32
+  op_type: convolution
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_reduce_fp32
+  op_type: reduce
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_sync_fp32
+  op_type: sync
+  input_dtype: fp32
+  accumulate_dtype: fp32
+  output_dtype: fp32
+  model: calibrated_duration
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0
+- id: h1/gpu0_gemm_bf16
+  op_type: gemm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_elementwise_bf16
+  op_type: elementwise
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_norm_bf16
+  op_type: norm
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_attention_bf16
+  op_type: attention
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_convolution_bf16
+  op_type: convolution
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_reduce_bf16
+  op_type: reduce
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: analytical_roofline
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids:
+  - h1/hbm_bw
+  launch_s: 5.0e-06
+- id: h1/gpu0_sync_bf16
+  op_type: sync
+  input_dtype: bf16
+  accumulate_dtype: fp32
+  output_dtype: bf16
+  model: calibrated_duration
+  effective_ops_per_s: 30000000000000
+  slot_resource_id: h1/gpu_slots
+  memory_rate_resource_ids: []
+  launch_s: 0
+  duration_s: 0

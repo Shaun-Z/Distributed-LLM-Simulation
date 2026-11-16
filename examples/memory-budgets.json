@@ -1,0 +1,5 @@
+[
+  {"ram_capacity": 0, "hbm_capacity": 1000000},
+  {"ram_capacity": 16000000, "hbm_capacity": 8000000},
+  {"ram_capacity": 64000000, "hbm_capacity": 32000000}
+]

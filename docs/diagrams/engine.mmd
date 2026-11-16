@@ -1,0 +1,18 @@
+flowchart TD
+    A["📥 Next Valid Event Time"] --> B["Integrate Work with Previous Rates"]
+    B --> C["Batch Completions and Releases"]
+    C --> D["Apply Capacity Changes and Arrivals"]
+    D --> E["Update Dependencies and Memory"]
+    E --> F["Dispatch Ready Activities"]
+    F --> G["Recompute Feasible Rates"]
+    G --> H["Invalidate Old Predictions"]
+    H --> I["Schedule New Completion Events"]
+    I --> J{"Finished?"}
+    J -->|No| A
+    J -->|Yes| K["📊 Final Metrics"]
+    classDef step fill:#87CEEB,stroke:#333,color:#111
+    classDef decision fill:#FFE66D,stroke:#333,color:#111
+    classDef result fill:#90EE90,stroke:#333,color:#111
+    class A,B,C,D,E,F,G,H,I step
+    class J decision
+    class K result

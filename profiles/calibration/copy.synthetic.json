@@ -1,0 +1,50 @@
+[
+  {
+    "concurrency": 1,
+    "device_identity": "synthetic-link",
+    "dtype": "fp32",
+    "duration_s": 1.1,
+    "id": "copy-0",
+    "measured_at": "2026-11-13",
+    "methodology": "analytic T=0.1+size/100; not a physical measurement",
+    "operation": "copy",
+    "shape": [],
+    "size_bytes": 100,
+    "software_version": "synthetic-v1",
+    "source_uri": "synthetic://linear-copy-oracle",
+    "split": "calibration",
+    "synthetic": true
+  },
+  {
+    "concurrency": 1,
+    "device_identity": "synthetic-link",
+    "dtype": "fp32",
+    "duration_s": 10.1,
+    "id": "copy-1",
+    "measured_at": "2026-11-13",
+    "methodology": "analytic T=0.1+size/100; not a physical measurement",
+    "operation": "copy",
+    "shape": [],
+    "size_bytes": 1000,
+    "software_version": "synthetic-v1",
+    "source_uri": "synthetic://linear-copy-oracle",
+    "split": "calibration",
+    "synthetic": true
+  },
+  {
+    "concurrency": 1,
+    "device_identity": "synthetic-link",
+    "dtype": "fp32",
+    "duration_s": 5.1,
+    "id": "copy-2",
+    "measured_at": "2026-11-13",
+    "methodology": "analytic T=0.1+size/100; not a physical measurement",
+    "operation": "copy",
+    "shape": [],
+    "size_bytes": 500,
+    "software_version": "synthetic-v1",
+    "source_uri": "synthetic://linear-copy-oracle",
+    "split": "validation",
+    "synthetic": true
+  }
+]

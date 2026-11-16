@@ -1,0 +1,22 @@
+{
+  "op_compute": [
+    [
+      "left",
+      "uc0"
+    ],
+    [
+      "right",
+      "ug0"
+    ],
+    [
+      "join",
+      "uc0"
+    ]
+  ],
+  "op_kernel": [],
+  "tensor_target_pool": [],
+  "routes": [],
+  "reload_tensor_ids": [],
+  "transfer_routes": [],
+  "final_output_pools": []
+}

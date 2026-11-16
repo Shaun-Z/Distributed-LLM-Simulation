@@ -218,3 +218,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Simulator experiment outputs
+/runs/
+
+# Workbench build and browser-test outputs
+/frontend/node_modules/
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/*.tsbuildinfo
+/src/distributed_llm_simulation/web/static/
+/src/distributed_llm_simulation/web/data/

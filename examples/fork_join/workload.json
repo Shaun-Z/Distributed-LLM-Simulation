@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "name": "fork_join",
+  "tensors": [
+    {
+      "id": "input",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 16,
+      "wire_bytes": null,
+      "producer_id": null,
+      "consumer_ids": [
+        "left",
+        "right"
+      ],
+      "initial_pool_ids": [
+        "uma0"
+      ],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "left",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 16,
+      "wire_bytes": null,
+      "producer_id": "left",
+      "consumer_ids": [
+        "join"
+      ],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "right",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 16,
+      "wire_bytes": null,
+      "producer_id": "right",
+      "consumer_ids": [
+        "join"
+      ],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "output",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 16,
+      "wire_bytes": null,
+      "producer_id": "join",
+      "consumer_ids": [],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    }
+  ],
+  "operators": [
+    {
+      "id": "left",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "input"
+      ],
+      "outputs": [
+        "left"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.001,
+      "request_id": "r0",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    },
+    {
+      "id": "right",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "input"
+      ],
+      "outputs": [
+        "right"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.001,
+      "request_id": "r0",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    },
+    {
+      "id": "join",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "left",
+        "right"
+      ],
+      "outputs": [
+        "output"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.0,
+      "request_id": "r0",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    }
+  ],
+  "requests": [
+    {
+      "id": "r0",
+      "arrival_s": 0.0,
+      "output_tensor_ids": [
+        "output"
+      ],
+      "markers": []
+    }
+  ]
+}

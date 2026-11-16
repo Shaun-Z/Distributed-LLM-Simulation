@@ -1,0 +1,48 @@
+[project]
+name = "distributed-llm-simulation"
+version = "0.1.0"
+description = "Reproducible resource-graph simulator for heterogeneous distributed workloads"
+readme = "README.md"
+authors = [
+    { name = "Shaun Zhou", email = "xiangyuzhou823@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "networkx>=3.7",
+    "pydantic>=2.14.3",
+    "pyyaml>=6.0.3",
+]
+
+[project.scripts]
+distributed-llm-simulation = "distributed_llm_simulation:main"
+heterosim = "distributed_llm_simulation.cli:main"
+
+[project.optional-dependencies]
+web = [
+    "fastapi>=0.163.1",
+    "uvicorn>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.5",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+
+[tool.uv.build-backend]
+source-include = ["frontend/src/**", "frontend/*.json", "frontend/*.ts", "frontend/index.html", "frontend/scripts/**", "frontend/e2e/**", "profiles/hardware/**", "README_CN.md", "docs/workbench.md"]

@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "name": "two_stage_pipeline",
+  "tensors": [
+    {
+      "id": "r0/input",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 4,
+      "wire_bytes": null,
+      "producer_id": null,
+      "consumer_ids": [
+        "r0/A"
+      ],
+      "initial_pool_ids": [
+        "ram0"
+      ],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "r0/activation",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 8000000,
+      "wire_bytes": null,
+      "producer_id": "r0/A",
+      "consumer_ids": [
+        "r0/B"
+      ],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "r0/output",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 4,
+      "wire_bytes": null,
+      "producer_id": "r0/B",
+      "consumer_ids": [],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "r1/input",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 4,
+      "wire_bytes": null,
+      "producer_id": null,
+      "consumer_ids": [
+        "r1/A"
+      ],
+      "initial_pool_ids": [
+        "ram0"
+      ],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "r1/activation",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 8000000,
+      "wire_bytes": null,
+      "producer_id": "r1/A",
+      "consumer_ids": [
+        "r1/B"
+      ],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    },
+    {
+      "id": "r1/output",
+      "shape": [],
+      "dtype": "fp32",
+      "storage_bytes": 4,
+      "wire_bytes": null,
+      "producer_id": "r1/B",
+      "consumer_ids": [],
+      "initial_pool_ids": [],
+      "persistent": false,
+      "version": 0
+    }
+  ],
+  "operators": [
+    {
+      "id": "r0/A",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "r0/input"
+      ],
+      "outputs": [
+        "r0/activation"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.002,
+      "request_id": "r0",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    },
+    {
+      "id": "r0/B",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "r0/activation"
+      ],
+      "outputs": [
+        "r0/output"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.003,
+      "request_id": "r0",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    },
+    {
+      "id": "r1/A",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "r1/input"
+      ],
+      "outputs": [
+        "r1/activation"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.002,
+      "request_id": "r1",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    },
+    {
+      "id": "r1/B",
+      "op_type": "gemm",
+      "algorithm": "default",
+      "layout": "dense",
+      "inputs": [
+        "r1/activation"
+      ],
+      "outputs": [
+        "r1/output"
+      ],
+      "input_dtype": "fp32",
+      "accumulate_dtype": "fp32",
+      "output_dtype": "fp32",
+      "flops": 0.0,
+      "integer_ops": 0.0,
+      "read_bytes": [],
+      "write_bytes": [],
+      "workspace_bytes": 0,
+      "duration_s": 0.003,
+      "request_id": "r1",
+      "control_predecessors": [],
+      "shape_params": [],
+      "attrs": []
+    }
+  ],
+  "requests": [
+    {
+      "id": "r0",
+      "arrival_s": 0.0,
+      "output_tensor_ids": [
+        "r0/output"
+      ],
+      "markers": []
+    },
+    {
+      "id": "r1",
+      "arrival_s": 0.0,
+      "output_tensor_ids": [
+        "r1/output"
+      ],
+      "markers": []
+    }
+  ]
+}

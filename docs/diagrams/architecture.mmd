@@ -1,0 +1,20 @@
+flowchart TB
+    H["🧩 Hardware Profiles"] --> HG["Hardware Resource Graph"]
+    W["📦 Workload Plugins"] --> WG["Workload DAG"]
+    HG --> P["Placement and Lowering"]
+    WG --> P
+    P --> X["Execution Plan"]
+    X --> S["Scheduler"]
+    S --> E["Discrete Event Engine"]
+    E --> A["Resource Arbitration"]
+    A --> E
+    E --> S
+    E --> M["📊 Trace and Metrics"]
+    M --> O["Search and Bounds Analysis"]
+    O -.-> P
+    classDef input fill:#E6E6FA,stroke:#333,color:#111
+    classDef core fill:#87CEEB,stroke:#333,color:#111
+    classDef output fill:#90EE90,stroke:#333,color:#111
+    class H,W,HG,WG input
+    class P,X,S,E,A core
+    class M,O output

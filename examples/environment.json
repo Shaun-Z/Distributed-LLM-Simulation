@@ -1,0 +1,7 @@
+{
+  "network_mode": "fluid",
+  "seed": 42,
+  "capacity_processes": [
+    {"resource_id": "pcie_h2d_bw", "points": [[0, 8000000000], [0.0025, 0], [0.004, 4000000000]]}
+  ]
+}

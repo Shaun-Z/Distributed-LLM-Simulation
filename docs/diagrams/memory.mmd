@@ -1,0 +1,21 @@
+flowchart LR
+    subgraph D[Discrete Memory Host]
+        CPU["⚙ CPU"] --- RAM["RAM"]
+        RAM --- PCIE["PCIe Switch"]
+        PCIE --- GPU["⚙ GPU"]
+        GPU --- HBM["VRAM / HBM"]
+        PCIE --- NIC["NIC"]
+    end
+    NIC --- SW["Network Switch"]
+    subgraph U[Unified Memory Host]
+        UC["⚙ CPU"] --- UM["Shared Physical Memory"]
+        UG["⚙ GPU"] --- UM
+        UN["NIC"] --- UM
+    end
+    SW --- UN
+    classDef compute fill:#87CEEB,stroke:#333,color:#111
+    classDef memory fill:#E6E6FA,stroke:#333,color:#111
+    classDef transport fill:#90EE90,stroke:#333,color:#111
+    class CPU,GPU,UC,UG compute
+    class RAM,HBM,UM memory
+    class PCIE,NIC,SW,UN transport
