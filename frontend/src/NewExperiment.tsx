@@ -16,8 +16,10 @@ import { api, download } from "./api";
 import type { Catalog, Draft, Edit, Preview, Section, Specs } from "./types";
 import { Badge, Card, ErrorBox, Loading, PageTitle, Validated } from "./ui";
 import { Graphs } from "./Graphs";
+import { useTheme } from "./theme";
 
 export function NewExperiment() {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const catalog = useQuery({
@@ -703,7 +705,7 @@ export function NewExperiment() {
               <CodeMirror
                 value={draft[section]}
                 height="540px"
-                theme="dark"
+                theme={theme}
                 extensions={[yaml()]}
                 onChange={(value) =>
                   setDraft({ ...current.current!, [section]: value })

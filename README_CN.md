@@ -39,6 +39,8 @@ npm --prefix frontend run build
 uv run --extra web heterosim ui --runs-dir runs --port 8765
 ```
 
+右上角 **Light theme / Dark theme** 按钮可切换明暗主题，选择会保存在本地，刷新后恢复；拓扑/DAG、图表和源码编辑器同步切换。暗色 DAG 的连线、箭头、标签和选中轮廓已提高对比度。
+
 打开 **http://127.0.0.1:8765** ，选择真实内置场景，编辑、校验并启动实验。已有 CLI 结果只读加载；任务状态实时更新，仿真图表在运行结束后读取完整产物。缺失事件时明确显示数据不可用。Node 只用于开发和构建；发布 wheel 包含前端静态资源与演示 profiles。
 
 详细操作、TP/PP 示例、曲线语义、开发测试与打包方式见 [工作台指南（英文）](docs/workbench.md)。

@@ -28,6 +28,7 @@ import "@fontsource/dm-sans/latin-500.css";
 import "@fontsource/dm-sans/latin-600.css";
 import "@fontsource/jetbrains-mono/latin-400.css";
 import "./style.css";
+import { ThemeProvider, ThemeToggle } from "./theme";
 const client = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 1500 } },
 });
@@ -82,6 +83,7 @@ function App() {
               <span className="breadcrumb">/</span>Workbench
             </span>
             <div>
+              <ThemeToggle />
               <span className="live-dot" />
               <span>LOCAL SESSION</span>
               <div className="avatar">HS</div>
@@ -120,7 +122,9 @@ function App() {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 );

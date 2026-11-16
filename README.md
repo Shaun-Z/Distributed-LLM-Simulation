@@ -39,6 +39,8 @@ npm --prefix frontend run build
 uv run --extra web heterosim ui --runs-dir runs --port 8765
 ```
 
+Use the header's **Light theme / Dark theme** button to switch appearance. The choice is saved locally and restored after refresh; diagrams, charts, and the source editor follow it. Dark-mode DAGs use high-contrast edges, arrows, labels, and selection outlines.
+
 Open **http://127.0.0.1:8765**. Start with a real built-in scenario, edit forms or YAML/JSON sources, validate, then run. Existing CLI results are discovered without modification. Complete traces are read after execution; task status updates are live. Missing trace data is labeled unavailable. Node is needed only for development/building; release wheels bundle the UI and demo profiles.
 
 See the [workbench guide](docs/workbench.md) for TP/PP examples, development, curve interpretation, tests, and packaging.

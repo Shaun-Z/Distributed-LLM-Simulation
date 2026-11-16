@@ -23,6 +23,7 @@ import type { EChartsOption } from "echarts";
 import type { Series, Specs, TimelineRow } from "./types";
 import { bytes, colors, duration } from "./format";
 import { Empty } from "./ui";
+import { palettes, useTheme, type Theme } from "./theme";
 
 export function Chart({
   option,
@@ -33,6 +34,8 @@ export function Chart({
   height?: number;
   onClick?: (value: unknown) => void;
 }) {
+  const { theme } = useTheme();
+  const previousTheme = useRef(theme);
   const element = useRef<HTMLDivElement>(null);
   const instance = useRef<echarts.ECharts | null>(null);
   const callback = useRef(onClick);
@@ -51,8 +54,25 @@ export function Chart({
     };
   }, []);
   useEffect(() => {
-    instance.current?.setOption(option, true);
-  }, [option]);
+    const chart = instance.current;
+    if (!chart) return;
+    const changingTheme = previousTheme.current !== theme;
+    const old = changingTheme ? chart.getOption() : null;
+    chart.setOption(option, true);
+    if (old) {
+      const zoom = (
+        old.dataZoom as { start?: number; end?: number }[] | undefined
+      )?.map(({ start, end }) => ({ start, end }));
+      const legend = (
+        old.legend as { selected?: Record<string, boolean> }[] | undefined
+      )?.map(({ selected }) => ({ selected }));
+      chart.setOption({
+        ...(zoom ? { dataZoom: zoom } : {}),
+        ...(legend ? { legend } : {}),
+      });
+    }
+    previousTheme.current = theme;
+  }, [option, theme]);
   return (
     <div
       role="img"
@@ -62,48 +82,62 @@ export function Chart({
     />
   );
 }
-const base: EChartsOption = {
-  backgroundColor: "transparent",
-  color: colors,
-  textStyle: {
-    color: "#9baab9",
-    fontFamily: "DM Sans, system-ui, sans-serif",
-    fontSize: 11,
-  },
-  grid: { left: 65, right: 28, top: 38, bottom: 85 },
-  tooltip: {
-    trigger: "axis",
-    backgroundColor: "#16202d",
-    borderColor: "#334454",
-    textStyle: { color: "#d9e8ef" },
-  },
-  legend: { type: "scroll", textStyle: { color: "#91a3b5" }, top: 0 },
-  xAxis: {
-    type: "value",
-    name: "Simulation time",
-    nameLocation: "middle",
-    nameGap: 38,
-    axisLine: { lineStyle: { color: "#283441" } },
-    splitLine: { lineStyle: { color: "#1d2732" } },
-    axisLabel: { formatter: (v: number) => duration(v) },
-  },
-  yAxis: {
-    type: "value",
-    splitLine: { lineStyle: { color: "#1d2732" } },
-    axisLabel: { color: "#91a3b5" },
-  },
-  dataZoom: [
-    { type: "inside" },
-    {
-      type: "slider",
-      height: 16,
-      bottom: 8,
-      borderColor: "#26313d",
-      fillerColor: "#32d5c71c",
-      handleStyle: { color: "#32d5c7" },
+function chartBase(theme: Theme): EChartsOption {
+  const palette = palettes[theme];
+  return {
+    backgroundColor: "transparent",
+    color:
+      theme === "dark"
+        ? colors
+        : [
+            palette.accent,
+            palette.transfer,
+            palette.startup,
+            "#b24163",
+            "#2866bb",
+            "#56812d",
+          ],
+    textStyle: {
+      color: palette.text,
+      fontFamily: "DM Sans, system-ui, sans-serif",
+      fontSize: 11,
     },
-  ],
-};
+    grid: { left: 65, right: 28, top: 38, bottom: 85 },
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: palette.tooltip,
+      borderColor: palette.border,
+      textStyle: { color: palette.text },
+    },
+    legend: { type: "scroll", textStyle: { color: palette.text }, top: 0 },
+    xAxis: {
+      type: "value",
+      name: "Simulation time",
+      nameLocation: "middle",
+      nameGap: 38,
+      axisLine: { lineStyle: { color: palette.border } },
+      splitLine: { lineStyle: { color: palette.grid } },
+      axisLabel: { color: palette.text, formatter: (v: number) => duration(v) },
+      nameTextStyle: { color: palette.text },
+    },
+    yAxis: {
+      type: "value",
+      splitLine: { lineStyle: { color: palette.grid } },
+      axisLabel: { color: palette.text },
+    },
+    dataZoom: [
+      { type: "inside" },
+      {
+        type: "slider",
+        height: 16,
+        bottom: 8,
+        borderColor: palette.border,
+        fillerColor: "#32d5c71c",
+        handleStyle: { color: palette.accent },
+      },
+    ],
+  };
+}
 export function ResourceChart({
   series,
   kind,
@@ -115,6 +149,8 @@ export function ResourceChart({
   resource?: string;
   titlePrefix?: string;
 }) {
+  const { theme } = useTheme();
+  const base = chartBase(theme);
   const [showCapacity, setShowCapacity] = useState(false);
   let items = series.series.filter(
     (s) => s.kind === kind && (!resource || s.id === resource),
@@ -170,6 +206,7 @@ export function ResourceChart({
     yAxis: {
       ...(base.yAxis as object),
       axisLabel: {
+        color: palettes[theme].text,
         formatter: (v: number) => bytes(v) + (kind === "service" ? "/s" : ""),
       },
     },
@@ -205,6 +242,8 @@ export function OverlayChart({
   entries: { name: string; data: Series }[];
   pool: string;
 }) {
+  const { theme } = useTheme();
+  const base = chartBase(theme);
   const lines = entries.flatMap((e) =>
     e.data.series
       .filter((s) => s.kind === "memory" && s.id === pool)
@@ -223,7 +262,10 @@ export function OverlayChart({
         ...base,
         yAxis: {
           ...(base.yAxis as object),
-          axisLabel: { formatter: (v: number) => bytes(v) },
+          axisLabel: {
+            color: palettes[theme].text,
+            formatter: (v: number) => bytes(v),
+          },
         },
         series: lines,
       }}
@@ -247,7 +289,10 @@ export function TimelineChart({
   onSelect: (id: string) => void;
   cursor?: number;
 }) {
+  const { theme } = useTheme();
   const option = useMemo(() => {
+    const palette = palettes[theme];
+    const base = chartBase(theme);
     const assignments = Object.fromEntries(specs.placement.op_compute);
     const acts = Object.fromEntries(
       (specs.execution?.activities ?? []).map((a) => [a.id, a]),
@@ -277,10 +322,10 @@ export function TimelineChart({
       const setupEnd = Math.min(finish, row.start_s + row.setup_s);
       const color =
         row.activity_id === selected
-          ? "#f5f9fc"
+          ? palette.graphLabel
           : row.kind === "transfer"
-            ? "#a69aff"
-            : "#32d5c7";
+            ? palette.transfer
+            : palette.accent;
       if (setupEnd > row.start_s)
         data.push({
           value: [
@@ -290,7 +335,7 @@ export function TimelineChart({
             row.activity_id,
             "startup",
           ],
-          itemStyle: { color: "#b38949", opacity: 0.75 },
+          itemStyle: { color: palette.startup, opacity: 0.75 },
         });
       data.push({
         value: [
@@ -302,7 +347,9 @@ export function TimelineChart({
         ],
         itemStyle: {
           color,
-          borderColor: critical.includes(row.activity_id) ? "#f7c867" : color,
+          borderColor: critical.includes(row.activity_id)
+            ? palette.selected
+            : color,
           borderWidth: critical.includes(row.activity_id) ? 2 : 0,
           opacity:
             selected &&
@@ -319,9 +366,9 @@ export function TimelineChart({
       grid: { left: 155, right: 25, top: 15, bottom: 66 },
       tooltip: {
         trigger: "item",
-        backgroundColor: "#16202d",
-        borderColor: "#334454",
-        textStyle: { color: "#d9e8ef" },
+        backgroundColor: palette.tooltip,
+        borderColor: palette.border,
+        textStyle: { color: palette.text },
         formatter: (p: any) =>
           `${echarts.format.encodeHTML(String(p.value[4]))}<br/>${duration(p.value[1])} → ${duration(p.value[2])}<br/>${echarts.format.encodeHTML(String(p.value[3]))}`,
       },
@@ -331,8 +378,8 @@ export function TimelineChart({
         inverse: true,
         axisLine: { show: false },
         axisTick: { show: false },
-        axisLabel: { color: "#94a5b7", width: 140, overflow: "truncate" },
-        splitLine: { show: true, lineStyle: { color: "#1b2530" } },
+        axisLabel: { color: palette.text, width: 140, overflow: "truncate" },
+        splitLine: { show: true, lineStyle: { color: palette.grid } },
       },
       series: [
         {
@@ -368,14 +415,14 @@ export function TimelineChart({
                   silent: true,
                   symbol: "none",
                   label: { show: false },
-                  lineStyle: { color: "#f7c867", width: 1 },
+                  lineStyle: { color: palette.selected, width: 1 },
                   data: [{ xAxis: cursor }],
                 },
         },
       ],
     };
     return { opt, lanes };
-  }, [rows, specs, critical, selected, cursor]);
+  }, [rows, specs, critical, selected, cursor, theme]);
   return rows.length ? (
     <Chart
       option={option.opt}

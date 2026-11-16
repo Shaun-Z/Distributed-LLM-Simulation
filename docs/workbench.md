@@ -23,6 +23,12 @@ npm --prefix frontend run dev
 
 Open the URL printed by Vite. Its `/api` proxy preserves the request host, so same-origin mutation checks work in development. Restart the Python service after changing backend files, or use Uvicorn's factory/reload mode for backend development.
 
+## Appearance
+
+Use the **Light theme / Dark theme** button in the header. Dark is the default; the browser remembers an explicit selection across page navigation and refresh. Theme changes also update React Flow, chart colors and the source editor without changing the experiment draft. Graph selection and viewport position are preserved.
+
+DAGs use brighter, thicker edges and matching arrowheads, opaque high-contrast edge labels, distinct tensor/memory/transfer nodes, and a visible selection outline. Node labels wrap to two lines, and initial fitting avoids shrinking large graphs below a readable scale. Use **Readable view** to focus on the start of a large graph, **Fit all** for an overview, or pan and navigate with the minimap and zoom controls.
+
 ## Workflow
 
 1. **New experiment**: choose a workload and compatible hardware profile. Scenario fields regenerate specs only when you click **Build scenario**. Rebuilding asks before replacing manual edits. The default templates use the same known-compatible device IDs as the CLI demos.

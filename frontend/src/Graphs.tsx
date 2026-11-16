@@ -4,6 +4,8 @@ import {
   Background,
   Controls,
   MiniMap,
+  Panel,
+  useReactFlow,
   MarkerType,
   BaseEdge,
   EdgeLabelRenderer,
@@ -16,6 +18,7 @@ import "@xyflow/react/dist/style.css";
 import type { Specs } from "./types";
 import { bytes } from "./format";
 import { JsonView } from "./ui";
+import { palettes, useTheme } from "./theme";
 
 type Entity = { id: string; label: string; kind: string; data: unknown };
 export function Graphs({
@@ -25,6 +28,8 @@ export function Graphs({
   specs: Specs;
   onActivity?: (id: string) => void;
 }) {
+  const { theme } = useTheme();
+  const palette = palettes[theme];
   const [mode, setMode] = useState("hardware");
   const [search, setSearch] = useState("");
   const [tensors, setTensors] = useState(false);
@@ -59,9 +64,12 @@ export function Graphs({
             channel: c,
             offset: (index - ((totals.get(key) ?? 1) - 1) / 2) * 55,
           },
-          style: { stroke: c.kind === "memory_access" ? "#344755" : "#298f8a" },
-          labelStyle: { fill: "#8a9ba9", fontSize: 10 },
-          labelBgStyle: { fill: "#111821" },
+          style: {
+            stroke:
+              c.kind === "memory_access" ? palette.graphEdge : palette.accent,
+          },
+          labelStyle: { fill: palette.graphLabel, fontSize: 11 },
+          labelBgStyle: { fill: palette.graphLabelBg },
         };
       });
     } else if (mode === "workload") {
@@ -113,7 +121,7 @@ export function Graphs({
             source: "op:" + pred,
             target: "op:" + o.id,
             label: "control",
-            style: { stroke: "#a88955", strokeDasharray: "5 4" },
+            style: { stroke: palette.graphControl, strokeDasharray: "6 4" },
           });
     } else {
       entities = (specs.execution?.activities ?? []).map((a) => ({
@@ -141,11 +149,11 @@ export function Graphs({
     const layout = new dagre.graphlib.Graph({ multigraph: true });
     layout.setGraph({
       rankdir: mode === "hardware" ? "LR" : "TB",
-      ranksep: 70,
-      nodesep: 30,
+      ranksep: 85,
+      nodesep: 38,
     });
     layout.setDefaultEdgeLabel(() => ({}));
-    visible.forEach((e) => layout.setNode(e.id, { width: 195, height: 66 }));
+    visible.forEach((e) => layout.setNode(e.id, { width: 220, height: 82 }));
     edges.forEach((e) => layout.setEdge(e.source, e.target, {}, e.id));
     dagre.layout(layout);
     const nodes: Node[] = visible.map(
@@ -167,8 +175,8 @@ export function Graphs({
             ),
           },
           position: {
-            x: layout.node(e.id).x - 97.5,
-            y: layout.node(e.id).y - 33,
+            x: layout.node(e.id).x - 110,
+            y: layout.node(e.id).y - 41,
           },
           className:
             "graph-node " +
@@ -176,8 +184,12 @@ export function Graphs({
               ? "transfer"
               : e.kind === "memory"
                 ? "memory"
-                : ""),
-          style: { width: 195 },
+                : e.kind === "tensor"
+                  ? "tensor"
+                  : ""),
+          width: 220,
+          height: 82,
+          style: { width: 220, height: 82 },
           sourcePosition: mode === "hardware" ? "right" : "bottom",
           targetPosition: mode === "hardware" ? "left" : "top",
         }) as Node,
@@ -187,14 +199,34 @@ export function Graphs({
       nodes,
       edges: edges.map((e) => ({
         ...e,
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#476574" },
-        style: e.style ?? { stroke: "#3c646d" },
-        labelStyle: e.labelStyle ?? { fill: "#8c9eab", fontSize: 10 },
-        labelBgStyle: { fill: "#111821" },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: e.style?.stroke ?? palette.graphEdge,
+          width: 20,
+          height: 20,
+        },
+        style: { stroke: palette.graphEdge, ...e.style, strokeWidth: 2 },
+        labelStyle: { fill: palette.graphLabel, fontSize: 11, fontWeight: 600 },
+        labelShowBg: true,
+        labelBgPadding: [7, 4] as [number, number],
+        labelBgBorderRadius: 4,
+        labelBgStyle: { fill: palette.graphLabelBg, fillOpacity: 1 },
       })),
       total: matches.length,
     };
-  }, [specs, mode, search, tensors]);
+  }, [specs, mode, search, tensors, palette]);
+  const nodes = useMemo(
+    () => graph.nodes.map((n) => ({ ...n, selected: selected?.id === n.id })),
+    [graph.nodes, selected?.id],
+  );
+  const edges = useMemo(
+    () =>
+      graph.edges.map((e) => ({
+        ...e,
+        selected: selected?.kind === "edge" && selected.id === e.id,
+      })),
+    [graph.edges, selected],
+  );
   return (
     <>
       <div className="toolbar">
@@ -243,8 +275,8 @@ export function Graphs({
         <div className="graph-canvas">
           <ReactFlow
             key={mode + search + tensors}
-            nodes={graph.nodes}
-            edges={graph.edges}
+            nodes={nodes}
+            edges={edges}
             edgeTypes={edgeTypes}
             onEdgeClick={(_, edge) => {
               if (edge.data)
@@ -259,20 +291,37 @@ export function Graphs({
             nodesConnectable={false}
             deleteKeyCode={null}
             fitView
+            fitViewOptions={{
+              padding: 0.2,
+              minZoom: mode === "hardware" ? 0.05 : 0.8,
+              maxZoom: 1,
+              ...(mode !== "hardware" && graph.nodes.length > 8
+                ? { nodes: graph.nodes.slice(0, 1) }
+                : {}),
+            }}
             minZoom={0.05}
             maxZoom={2}
-            colorMode="dark"
+            colorMode={theme}
+            onPaneClick={() => setSelected(null)}
             onNodeClick={(_, n) =>
               setSelected(graph.entities.find((e) => e.id === n.id) ?? null)
             }
           >
-            <Background color="#26313d" gap={24} />
+            <Background
+              color={palette.graphGrid}
+              bgColor={palette.graphCanvas}
+              gap={24}
+            />
+            <Panel position="top-left">
+              <ViewButtons firstId={graph.nodes[0]?.id} />
+            </Panel>
             <Controls showInteractive={false} />
             <MiniMap
               pannable
               zoomable
-              nodeColor="#246a70"
-              maskColor="#0b1018aa"
+              style={{ width: 140, height: 95 }}
+              nodeColor={palette.graphComputeBorder}
+              maskColor={palette.graphMask}
             />
           </ReactFlow>
           <div className="graph-caption">
@@ -337,3 +386,37 @@ function ChannelEdge({
   );
 }
 const edgeTypes = { channel: ChannelEdge };
+
+function ViewButtons({ firstId }: { firstId?: string }) {
+  const { fitView } = useReactFlow();
+  return (
+    <div className="graph-view-actions">
+      <button
+        disabled={!firstId}
+        onClick={() =>
+          void fitView({
+            nodes: [{ id: firstId! }],
+            padding: 0.2,
+            minZoom: 0.8,
+            maxZoom: 1,
+            duration: 150,
+          })
+        }
+      >
+        Readable view
+      </button>
+      <button
+        onClick={() =>
+          void fitView({
+            padding: 0.2,
+            minZoom: 0.05,
+            maxZoom: 1,
+            duration: 150,
+          })
+        }
+      >
+        Fit all
+      </button>
+    </div>
+  );
+}
